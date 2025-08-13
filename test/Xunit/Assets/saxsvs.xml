@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<saxsvs version="5.0.0" datum="2025-06-06T12:00:00" dienststelle="1234567" schuljahr="2024/2025" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://web1.extranet.sachsen.de/svsp/public/XMLSchema/v5.0.0/saxsvs-5.0.0.xsd">
+  <dienststelle>
+    <wert feld="108-018">Testschule</wert>
+    <wert feld="108-006">1234567</wert>
+    <kooperierend>
+      <wert feld="108-018">Grundschule Test1</wert>
+      <wert feld="108-006">0123456</wert>
+    </kooperierend>
+    <kooperierend>
+      <wert feld="108-018">Grundschule Test2</wert>
+      <wert feld="108-006">1123456</wert>
+    </kooperierend>
+  </dienststelle>
+  <personal>
+    <person id="cfdc3582-f34a-4b62-8aeb-f4564a8e9d09" sync-id="LPTK1111111111111111111111111111111111111111111111111111111111111111">
+      <wert schluessel="S1033" extern-id="10" feld="200-008">LK</wert>
+      <wert feld="200-009">HM</wert>
+      <wert schluessel="K101" extern-id="2" feld="200-010">weibl.</wert>
+      <wert feld="200-014">Müller</wert>
+      <wert feld="200-015">Maria</wert>
+      <wert feld="200-016">Heidi</wert>
+      <wert feld="200-017">06.06.1984</wert>
+    </person>
+    <person id="8c259258-98f0-43b7-b13f-b47ce127ee9d" sync-id="LPTK2222222222222222222222222222222222222222222222222222222222222222">
+      <wert schluessel="S1033" extern-id="10" feld="200-008">LK</wert>
+      <wert feld="200-009">WS</wert>
+      <wert schluessel="K101" extern-id="1" feld="200-010">männl.</wert>
+      <wert feld="200-014">Schneider</wert>
+      <wert feld="200-016">Walter</wert>
+      <wert feld="200-017">06.06.1992</wert>
+    </person>
+  </personal>
+  <schuelerindex>
+    <schueler id="c7b5c2a2-534b-4862-abe5-b09dc1fe878a" sync-id="LPTK3333333333333333333333333333333333333333333333333333333333333333">
+      <wert feld="500-003">Beate</wert>
+      <wert feld="500-009">Schumacher</wert>
+      <wert schluessel="K101" extern-id="2" feld="500-015">weibl.</wert>
+      <wert feld="500-017">01.01.2013</wert>
+      <wert feld="500-019">Annaberg-Buchholz</wert>
+      <wert schluessel="StLa02" extern-id="000" feld="500-023">Deutschland</wert>
+      <wert schluessel="S1068" extern-id="120" feld="500-027">deut</wert>
+      <wert feld="500-033">1</wert>
+      <wert feld="500-060">01.08.2019</wert>
+      <wert feld="543-011">1234567</wert>
+      <wert feld="516-002">1</wert>
+      <zusammenstellung name="Versetzung">
+        <gruppierung>
+          <wert feld="514-009">2025/2026</wert>
+          <wert feld="514-010">10a</wert>
+          <wert schluessel="S1070" extern-id="30" feld="514-011">HS</wert>
+          <wert feld="514-013">1</wert>
+        </gruppierung>
+        <gruppierung>
+          <wert feld="514-009">2024/2025</wert>
+          <wert feld="514-010">9a</wert>
+          <wert schluessel="S1070" extern-id="10" feld="514-011">HS</wert>
+          <wert feld="514-013">1</wert>
+          <wert schluessel="S0532" extern-id="20" feld="514-015">Versetzung</wert>
+        </gruppierung>
+      </zusammenstellung>      <sorgeberechtigte>
+        <sorgeberechtigter>
+          <wert feld="520-009">1</wert>
+          <wert feld="520-010">1</wert>
+          <wert schluessel="S1057" extern-id="20" feld="520-011">Mutter</wert>
+          <wert schluessel="S1000" extern-id="20" feld="520-012">Fr.</wert>
+          <wert feld="520-013">Herta</wert>
+          <wert feld="520-014">Schumacher</wert>
+          <wert feld="521-021">Musterstraße</wert>
+          <wert feld="521-022">42</wert>
+          <wert feld="521-023">09434</wert>
+          <wert feld="521-024" gemeindeschluessel="14521020">Annaberg-Buchholz</wert>
+          <wert schluessel="StLa02" extern-id="000" feld="521-026">Deutschland</wert>
+          <wert feld="522-027">03733-1234567</wert>
+          <wert feld="522-040">0171-12399911</wert>
+        </sorgeberechtigter>
+        <sorgeberechtigter>
+          <wert feld="520-009">1</wert>
+          <wert schluessel="S1057" extern-id="10" feld="520-011">Vater</wert>
+          <wert schluessel="S1000" extern-id="10" feld="520-012">Hr.</wert>
+          <wert feld="520-013">Peter</wert>
+          <wert feld="520-014">Schumacher</wert>
+          <wert feld="521-021">Musterstraße</wert>
+          <wert feld="521-022">42</wert>
+          <wert feld="521-023">09434</wert>
+          <wert feld="521-024" gemeindeschluessel="14521020">Annaberg-Buchholz</wert>
+          <wert schluessel="StLa02" extern-id="000" feld="521-026">Deutschland</wert>
+          <wert feld="522-027">03733-1234567</wert>
+          <wert feld="522-028">0171-12399912</wert>
+        </sorgeberechtigter>
+      </sorgeberechtigte>
+    </schueler>
+    <schueler id="9ad6bf45-c3c4-4f3f-83ff-e42433b3e188" sync-id="LPTK4444444444444444444444444444444444444444444444444444444444444444">
+      <wert feld="500-003">Nastja</wert>
+      <wert feld="500-009">Gagarina</wert>
+      <wert schluessel="K101" extern-id="2" feld="500-015">weibl.</wert>
+      <wert feld="500-017">01.01.2012</wert>
+      <wert feld="500-019">Ukraine</wert>
+      <wert schluessel="StLa02" extern-id="166" feld="500-023">Ukraine</wert>
+      <wert schluessel="S1068" extern-id="243" feld="500-027">ukrai</wert>
+      <wert feld="500-060">01.08.2018</wert>
+      <wert feld="543-011">1234567</wert>
+      <wert feld="516-002">1</wert>
+      <sorgeberechtigte>
+        <sorgeberechtigter>
+          <wert feld="520-009">1</wert>
+          <wert feld="520-010">1</wert>
+          <wert schluessel="S1057" extern-id="20" feld="520-011">Mutter</wert>
+          <wert schluessel="S1000" extern-id="20" feld="520-012">Fr.</wert>
+          <wert feld="520-013">Lena</wert>
+          <wert feld="520-014">Gagarina</wert>
+          <wert feld="521-021">Musterstraße</wert>
+          <wert feld="521-022">43</wert>
+          <wert feld="521-023">09434</wert>
+          <wert feld="521-024" gemeindeschluessel="14521020">Annaberg-Buchholz</wert>
+          <wert schluessel="StLa02" extern-id="000" feld="521-026">Deutschland</wert>
+          <wert feld="522-028">0171-12399913</wert>
+          <wert feld="522-030">12345@gmail.com</wert>
+        </sorgeberechtigter>
+        <sorgeberechtigter>
+          <wert feld="520-009">1</wert>
+          <wert schluessel="S1057" extern-id="10" feld="520-011">Vater</wert>
+          <wert schluessel="S1000" extern-id="10" feld="520-012">Hr.</wert>
+          <wert feld="520-013">Juri</wert>
+          <wert feld="520-014">Gagarin</wert>
+          <wert feld="521-021">Musterstraße</wert>
+          <wert feld="521-022">43</wert>
+          <wert feld="521-023">09434</wert>
+          <wert feld="521-024" gemeindeschluessel="14521020">Annaberg-Buchholz</wert>
+          <wert schluessel="StLa02" extern-id="000" feld="521-026">Deutschland</wert>
+          <wert feld="522-028">0171-12399914</wert>
+          <wert feld="522-030">22345@gmail.com</wert>
+        </sorgeberechtigter>
+        <sorgeberechtigter>
+          <wert schluessel="S1057" extern-id="50" feld="520-011">Großmutter</wert>
+          <wert schluessel="S1000" extern-id="20" feld="520-012">Fr.</wert>
+          <wert feld="520-013">Olga</wert>
+          <wert feld="520-014">Schewtschenko</wert>
+          <wert feld="521-021">Musterstraße</wert>
+          <wert feld="521-022">43</wert>
+          <wert feld="521-023">09434</wert>
+          <wert feld="521-024" gemeindeschluessel="14521020">Annaberg-Buchholz</wert>
+          <wert schluessel="StLa02" extern-id="000" feld="521-026">Deutschland</wert>
+          <wert feld="522-028">0171-12399915</wert>
+          <wert feld="522-030">32345@gmail.com</wert>
+        </sorgeberechtigter>
+      </sorgeberechtigte>
+    </schueler>
+  </schuelerindex>
+  <klassen>
+    <klasse id="2680385e-105e-4be8-85d5-250d09e0d8b4">
+      <wert feld="400-003">2024/2025</wert>
+      <wert feld="400-011" extern-id="20100">Klassenstufe 9 Oberschule</wert>
+      <wert feld="400-012">9a</wert>
+      <wert feld="400-013" extern-id="09">KL9</wert>
+      <wert feld="400-015" person-id="cfdc3582-f34a-4b62-8aeb-f4564a8e9d09"/>
+      <wert feld="400-016" person-id="cfdc3582-f34a-4b62-8aeb-f4564a8e9d09"/>
+      <schuelerzuordnungen>
+        <schuelerzuordnung id="c7b5c2a2-534b-4862-abe5-b09dc1fe878a" von="2024-08-01T00:00:00" bis="2025-07-31T23:59:59"/>
+        <schuelerzuordnung id="9ad6bf45-c3c4-4f3f-83ff-e42433b3e188" von="2024-08-01T00:00:00" bis="2025-07-31T23:59:59"/>
+      </schuelerzuordnungen>
+    </klasse>
+  </klassen>
+  <unterrichtungen>
+    <unterricht id="7a3717d3-a98b-4f33-8cb6-35b7af2d3b4a">
+      <klassenzuordnungen>
+        <klassenzuordnung id="2680385e-105e-4be8-85d5-250d09e0d8b4"/>
+      </klassenzuordnungen>
+      <wert feld="750-003">2025/2026</wert>
+      <wert feld="750-022">1</wert>
+      <wert schluessel="S0550" extern-id="aa" feld="750-030">GB</wert>
+      <wert feld="750-032">1,00</wert>
+      <wert schluessel="S0520" extern-id="60040" feld="750-040">INF</wert>
+      <wert schluessel="S0520" extern-id="60040" feld="750-042">INF</wert>
+      <wert feld="750-060">INF-9a-1</wert>
+      <wert feld="750-092">Informatik</wert>
+    </unterricht>
+    <unterricht id="1458d0b3-e964-40b6-bd63-b3f9d4a79727">
+      <klassenzuordnungen>
+        <klassenzuordnung id="2680385e-105e-4be8-85d5-250d09e0d8b4"/>
+      </klassenzuordnungen>
+      <schuelerzuordnungen>
+        <schuelerzuordnung id="9ad6bf45-c3c4-4f3f-83ff-e42433b3e188" von="2024-08-01T00:00:00" bis="2025-07-31T23:59:59"/>
+      </schuelerzuordnungen>
+      <wert feld="750-003">2025/2026</wert>
+      <wert schluessel="S0550" extern-id="aa" feld="750-030">GB</wert>
+      <wert feld="750-032">25,00</wert>
+      <wert schluessel="S0520" extern-id="71010" feld="750-040">DAZ</wert>
+      <wert schluessel="S0520" extern-id="71010" feld="750-042">DAZ</wert>
+      <wert feld="750-060">DAZ 9</wert>
+      <wert feld="750-092">Deutsch als Zweitsprache</wert>
+    </unterricht>
+  </unterrichtungen>
+</saxsvs>

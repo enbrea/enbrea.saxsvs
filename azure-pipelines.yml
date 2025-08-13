@@ -1,0 +1,163 @@
+pool:
+  vmImage: 'windows-latest'
+
+variables:
+- group: 'code-sign-config'
+- group: 'nuget-package-config'
+- group: 'github-config'
+
+stages:
+
+- stage: BuildAndTest  
+  jobs:
+  - job: 
+    variables:
+      NUGET_PACKAGES: '$(Pipeline.Workspace)/.nuget/packages'
+    steps:
+    - checkout: self
+      fetchDepth: 0
+      persistCredentials: true
+    - task: DownloadSecureFile@1
+      displayName: 'Download Client Authentication Certificate'
+      name: SM_CLIENT_CERT_FILE
+      inputs:
+        secureFile: ClientCert.p12
+    - task: SSMClientToolsSetup@1
+      displayName: 'Setup DigiCert Tools'
+      condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
+      inputs:
+        APIKey: '$(SM_API_KEY)'
+    - task: PowerShell@2
+      displayName: 'Prepare DigiCert Code Signing'
+      condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
+      env:
+        SM_CLIENT_CERT_FILE : $(SM_CLIENT_CERT_FILE.secureFilePath)
+      inputs:
+        targetType: 'inline'
+        script: |
+          $env:PATH += ';C:\Program Files\DigiCert\DigiCert Keylocker Tools'
+          smctl credentials save $(SM_API_KEY) $(SM_CLIENT_CERT_PASSWORD)
+          smctl windows certsync --keypair-alias=$(SM_KEYPAIR_ALIAS)
+        failOnStderr: true
+        pwsh: true
+    - task: PowerShell@2
+      displayName: 'Get Version Number'
+      inputs:
+        filePath: 'azure-gitversion.ps1'
+        failOnStderr: true
+        pwsh: true
+    - task: Assembly-Info-NetCore@3
+      displayName: 'Apply Assembly Infos'
+      inputs:
+        Path: '$(Build.SourcesDirectory)'
+        FileNames: '**/*.csproj'
+        InsertAttributes: true
+        FileEncoding: 'auto'
+        WriteBOM: false
+        VersionNumber: '$(MajorVersion).$(MinorVersion).$(PatchVersion).$(Build.BuildId)'
+        FileVersionNumber: '$(MajorVersion).$(MinorVersion).$(PatchVersion).$(Build.BuildId)'
+        InformationalVersion: '$(SemVersion)'
+        LogLevel: 'verbose'
+        FailOnWarning: false
+    - task: Cache@2
+      displayName: 'Cache NuGet packages'
+      inputs:
+        key: 'nuget | "$(Agent.OS)" | **/*.csproj'
+        restoreKeys: 'nuget | "$(Agent.OS)"'
+        path: $(NUGET_PACKAGES)
+    - task: DotNetCoreCLI@2
+      displayName: 'Restore'
+      inputs:
+        command: 'restore'
+        projects: '*.sln'
+        feedsToUse: 'select'
+        vstsFeed: 'b0890edd-bcca-4a1c-b63c-d22daf6e4407/24f47e68-5eca-4ba8-8ab3-905662347d75'
+    - task: DotNetCoreCLI@2
+      displayName: 'Build'
+      inputs:
+        command: 'build'
+        projects: '*.sln'
+        arguments: '-c $(BuildConfiguration) --no-restore /p:ContinuousIntegrationBuild=true'
+    - task: DotNetCoreCLI@2
+      displayName: 'Test'
+      inputs:
+        command: 'test'
+        projects: '*.sln'
+        arguments: '-c $(BuildConfiguration) --no-build'
+        testRunTitle: 'Perform unit tests'
+    - task: DotNetCoreCLI@2
+      displayName: 'Pack'
+      inputs:
+        command: 'pack'
+        packagesToPack: 'src/Enbrea.SaxSVS.csproj'
+        nobuild: true
+        arguments: '/p:ContinuousIntegrationBuild=true'
+        versioningScheme: 'byEnvVar'
+        versionEnvVar: 'SemVersion'
+    - task: NuGetCommand@2
+      displayName: 'Sign'
+      condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
+      env:
+        SM_CLIENT_CERT_FILE : $(SM_CLIENT_CERT_FILE.secureFilePath)
+      inputs:
+        command: 'custom'
+        arguments: 'sign $(Build.ArtifactStagingDirectory)/**/*.nupkg -Timestamper http://timestamp.digicert.com -CertificateFingerprint $(SM_CERT_FINGERPRINT) -HashAlgorithm SHA256 -Verbosity detailed -Overwrite'
+    - publish: '$(Build.ArtifactStagingDirectory)'
+      artifact: drop
+      
+- stage: Deploy
+  jobs:
+  - job: 
+    steps:
+    - download: current
+      artifact: drop
+    - task: NuGetCommand@2
+      displayName: 'Publish preview to internal feed'
+      condition: and(succeeded(), ne(variables['Build.SourceBranch'], 'refs/heads/main'))
+      inputs:
+        command: 'push'
+        packagesToPush: '$(Pipeline.Workspace)/**/*.nupkg;!$(Pipeline.Workspace)/**/*.symbols.nupkg'
+        nuGetFeedType: 'internal'
+        publishVstsFeed: 'b0890edd-bcca-4a1c-b63c-d22daf6e4407/24f47e68-5eca-4ba8-8ab3-905662347d75'
+    - task: NuGetCommand@2
+      displayName: 'Publish to nuget.org'
+      condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
+      inputs:
+        command: 'push'
+        packagesToPush: '$(Pipeline.Workspace)/**/*.nupkg;!$(Pipeline.Workspace)/**/*.symbols.nupkg'
+        nuGetFeedType: 'external'
+        publishFeedCredentials: 'STUEBER SYSTEMS | nuget.org'
+
+- stage: GitHub
+  jobs:
+  - job: 
+    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
+    steps:
+    - checkout: self
+      persistCredentials: true
+    - task: PowerShell@2
+      displayName: 'Push to GitHub'
+      inputs:
+        targetType: 'inline'
+        script: |
+          $ErrorActionPreference = 'Stop'
+
+          # Configure Git identity
+          git config user.name  "azure-devops-bot"
+          git config user.email "azuredevops@stueber.nomail"
+
+          # Add 'github' remote
+          git remote add github https://$(PAT)@github.com/enbrea/enbrea.saxsvs.git
+
+          # Sanity-check divergence so we fail early if GitHub has new commits
+          git fetch github main --prune
+          if ((git rev-parse HEAD) -ne (git merge-base HEAD github/main)) {
+            Write-Error "Refusing to push: local main and github/main have diverged."
+          }
+
+          # Push only the main branch (fast-forward or create remote if missing)
+          git push github HEAD:main
+          
+          # Remove the remote so the PAT isn't left in .git/config
+          git remote remove github
+        pwsh: true
