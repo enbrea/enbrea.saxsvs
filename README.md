@@ -18,7 +18,7 @@ dotnet add package Enbrea.SaxSVS
 
 ## Getting started
 
-See [GitHub wiki](https://github.com/stuebersystems/enbrea.saxsvs/wiki).
+See [GitHub wiki](https://github.com/enbrea/enbrea.saxsvs/wiki).
 
 ## Can I help?
 
