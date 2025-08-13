@@ -1,5 +1,5 @@
 [![NuGet Gallery](https://img.shields.io/badge/NuGet%20Gallery-enbrea.saxsvs-blue.svg)](https://www.nuget.org/packages/Enbrea.SaxSVS/)
-![GitHub](https://img.shields.io/github/license/stuebersystems/enbrea.saxsvs)
+![GitHub](https://img.shields.io/github/license/enbrea/enbrea.saxsvs)
 
 # Enbrea SaxSVS
 
