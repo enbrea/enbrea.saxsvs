@@ -58,7 +58,16 @@
           <wert feld="514-013">1</wert>
           <wert schluessel="S0532" extern-id="20" feld="514-015">Versetzung</wert>
         </gruppierung>
-      </zusammenstellung>      <sorgeberechtigte>
+      </zusammenstellung>
+      <zusammenstellung name="Wahlfächer">
+        <gruppierung id="2025/2026">
+          <wert schluessel="S0520" extern-id="35010" feld="509-101">ETH</wert>
+        </gruppierung>
+        <gruppierung id="2024/2025">
+          <wert schluessel="S0520" extern-id="35010" feld="509-101">ETH</wert>
+        </gruppierung>
+      </zusammenstellung>
+      <sorgeberechtigte>
         <sorgeberechtigter>
           <wert feld="520-009">1</wert>
           <wert feld="520-010">1</wert>
@@ -174,6 +183,7 @@
       <wert schluessel="S0520" extern-id="60040" feld="750-042">INF</wert>
       <wert feld="750-060">INF-9a-1</wert>
       <wert feld="750-092">Informatik</wert>
+      <wert feld="700-020" person-id="8c259258-98f0-43b7-b13f-b47ce127ee9d"/>
     </unterricht>
     <unterricht id="1458d0b3-e964-40b6-bd63-b3f9d4a79727">
       <klassenzuordnungen>
@@ -189,6 +199,7 @@
       <wert schluessel="S0520" extern-id="71010" feld="750-042">DAZ</wert>
       <wert feld="750-060">DAZ 9</wert>
       <wert feld="750-092">Deutsch als Zweitsprache</wert>
+      <wert feld="700-020" person-id="cfdc3582-f34a-4b62-8aeb-f4564a8e9d09"/>
     </unterricht>
   </unterrichtungen>
 </saxsvs>

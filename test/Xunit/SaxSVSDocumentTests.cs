@@ -71,12 +71,14 @@ namespace Enbrea.SaxSVS.Tests
             Assert.Equal("INF", saxSVSDocument.Lessons[0].Subject.Name);
             Assert.Single(saxSVSDocument.Lessons[0].Classes);
             Assert.Equal(new Guid("2680385e-105e-4be8-85d5-250d09e0d8b4"), saxSVSDocument.Lessons[0].Classes[0].ClassId);
+            Assert.Equal(new Guid("8c259258-98f0-43b7-b13f-b47ce127ee9d"), saxSVSDocument.Lessons[0].TeacherId);
             Assert.Equal(new Guid("1458d0b3-e964-40b6-bd63-b3f9d4a79727"), saxSVSDocument.Lessons[1].Id);
             Assert.Equal("S0520", saxSVSDocument.Lessons[1].Subject.CodeList);
             Assert.Equal("71010", saxSVSDocument.Lessons[1].Subject.Code);
             Assert.Equal("DAZ", saxSVSDocument.Lessons[1].Subject.Name);
             Assert.Single(saxSVSDocument.Lessons[1].Classes);
             Assert.Equal(new Guid("2680385e-105e-4be8-85d5-250d09e0d8b4"), saxSVSDocument.Lessons[1].Classes[0].ClassId);
+            Assert.Equal(new Guid("cfdc3582-f34a-4b62-8aeb-f4564a8e9d09"), saxSVSDocument.Lessons[1].TeacherId);
             Assert.Single(saxSVSDocument.Lessons[1].Students);
             Assert.Equal(new Guid("9ad6bf45-c3c4-4f3f-83ff-e42433b3e188"), saxSVSDocument.Lessons[1].Students[0].StudentId);
         }
@@ -121,6 +123,8 @@ namespace Enbrea.SaxSVS.Tests
             Assert.Equal("Gagarina", saxSVSDocument.Students[1].Custodians[0].FamilyName);
             Assert.Equal(2, saxSVSDocument.Students[0].Promotions.Count);
             Assert.Equal("2024/2025", saxSVSDocument.Students[0].Promotions[1].AcademicYear);
+            Assert.Equal(2, saxSVSDocument.Students[0].ElectiveSubjects.Count);
+            Assert.Equal("2024/2025", saxSVSDocument.Students[0].ElectiveSubjects[1].AcademicYear);
         }
 
         [Fact]

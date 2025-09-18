@@ -81,46 +81,58 @@ namespace Enbrea.SaxSVS
         /// <returns>
         public static async Task<SaxSVSClass> FromXmlReader(XmlReader xmlReader, string parentElementName)
         {
-            var saxSVSClass = new SaxSVSClass
+            var schoolClass = new SaxSVSClass
             {
                 Id = Guid.Parse(xmlReader.GetAttribute("id"))
             };
 
-            await xmlReader.ReadAsync();
-
             while (!xmlReader.EOF)
             {
+                await xmlReader.MoveToContentAsync();
+
                 if (xmlReader.NodeType == XmlNodeType.Element)
                 {
-                    if (xmlReader.Name == "wert")
+                    if (xmlReader.Name == parentElementName)
+                    {
+                        if (xmlReader.IsEmptyElement)
+                        {
+                            await xmlReader.ReadAsync();
+                            return schoolClass;
+                        }
+                        else
+                        {
+                            await xmlReader.ReadAsync();
+                        }
+                    } 
+                    else if (xmlReader.Name == "wert")
                     {
                         var fieldId = xmlReader.GetAttribute("feld") ?? throw new FormatException("XML attribute \"field\" expected.");
 
                         switch (fieldId)
                         {
                             case "400-003":
-                                saxSVSClass.AcademicYear = await xmlReader.ReadElementContentAsStringAsync();
+                                schoolClass.AcademicYear = await xmlReader.ReadElementContentAsStringAsync();
                                 break;
 
                             case "400-011":
-                                saxSVSClass.ClassType = await SaxSVSCodeRef.FromXmlReader(xmlReader, xmlReader.Name);
+                                schoolClass.ClassType = await SaxSVSCodeRef.FromXmlReader(xmlReader, xmlReader.Name);
                                 break;
 
                             case "400-012":
-                                saxSVSClass.Name = await xmlReader.ReadElementContentAsStringAsync();
+                                schoolClass.Name = await xmlReader.ReadElementContentAsStringAsync();
                                 break;
 
                             case "400-013":
-                                saxSVSClass.ClassLevel = await SaxSVSCodeRef.FromXmlReader(xmlReader, xmlReader.Name);
+                                schoolClass.ClassLevel = await SaxSVSCodeRef.FromXmlReader(xmlReader, xmlReader.Name);
                                 break;
 
                             case "400-015":
-                                saxSVSClass.FormTeacherId = Guid.Parse(xmlReader.GetAttribute("person-id"));
+                                schoolClass.FormTeacherId = Guid.Parse(xmlReader.GetAttribute("person-id"));
                                 await xmlReader.ReadAsync();
                                 break;
 
                             case "400-016":
-                                saxSVSClass.DeputyFormTeacherId = Guid.Parse(xmlReader.GetAttribute("person-id"));
+                                schoolClass.DeputyFormTeacherId = Guid.Parse(xmlReader.GetAttribute("person-id"));
                                 await xmlReader.ReadAsync();
                                 break;
 
@@ -128,23 +140,23 @@ namespace Enbrea.SaxSVS
                             case "108-006":
                             case "108-018":
                             case "400-002":
-                                await xmlReader.ReadAsync();
+                                await xmlReader.SkipAsync();
                                 break;
 
                             default:
-                                await xmlReader.ReadAsync();
+                                await xmlReader.SkipAsync();
                                 break;
                         }
                     }
                     else if (xmlReader.Name == "schuelerzuordnungen")
                     {
-                        await xmlReader.ReadAsync();
-
                         while (!xmlReader.EOF)
                         {
+                            await xmlReader.MoveToContentAsync();
+
                             if (xmlReader.NodeType == XmlNodeType.Element && xmlReader.Name == "schuelerzuordnung")
                             {
-                                saxSVSClass.Students.Add(await SaxSVSStudentAttendance.FromXmlReader(xmlReader, xmlReader.Name));
+                                schoolClass.Students.Add(await SaxSVSStudentAttendance.FromXmlReader(xmlReader, xmlReader.Name));
                             }
                             else if (xmlReader.NodeType == XmlNodeType.EndElement && xmlReader.Name == "schuelerzuordnungen")
                             {
@@ -159,12 +171,13 @@ namespace Enbrea.SaxSVS
                     }
                     else
                     {
-                        await xmlReader.ReadAsync();
+                        await xmlReader.SkipAsync();
                     }
                 }
                 else if (xmlReader.NodeType == XmlNodeType.EndElement && xmlReader.Name == parentElementName)
                 {
-                    return saxSVSClass;
+                    await xmlReader.ReadAsync();
+                    return schoolClass;
                 }
                 else
                 {

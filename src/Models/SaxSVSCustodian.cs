@@ -152,13 +152,25 @@ namespace Enbrea.SaxSVS
         {
             var custodian = new SaxSVSCustodian();
 
-            await xmlReader.ReadAsync();
-
             while (!xmlReader.EOF)
             {
+                await xmlReader.MoveToContentAsync();
+
                 if (xmlReader.NodeType == XmlNodeType.Element)
                 {
-                    if (xmlReader.Name == "wert")
+                    if (xmlReader.Name == parentElementName)
+                    {
+                        if (xmlReader.IsEmptyElement)
+                        {
+                            await xmlReader.ReadAsync();
+                            return custodian;
+                        }
+                        else
+                        {
+                            await xmlReader.ReadAsync();
+                        }
+                    }
+                    else if (xmlReader.Name == "wert")
                     {
                         var fieldId = xmlReader.GetAttribute("feld") ?? throw new FormatException("XML attribute \"field\" expected.");
 
@@ -244,11 +256,11 @@ namespace Enbrea.SaxSVS
                             case "520-015":
                             case "521-025":
                             case "530-010":
-                                await xmlReader.ReadAsync();
+                                await xmlReader.SkipAsync();
                                 break;
 
                             default:
-                                await xmlReader.ReadAsync();
+                                await xmlReader.SkipAsync();
                                 break;
                         }
                     }
@@ -259,6 +271,7 @@ namespace Enbrea.SaxSVS
                 }
                 else if (xmlReader.NodeType == XmlNodeType.EndElement && xmlReader.Name == parentElementName)
                 {
+                    await xmlReader.ReadAsync();
                     return custodian;
                 }
                 else

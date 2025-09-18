@@ -59,7 +59,7 @@ namespace Enbrea.SaxSVS
 
             using (var xmlReader = XmlReader.Create(_textReader, new XmlReaderSettings { IgnoreWhitespace = true, Async = true }))
             {
-                while (await xmlReader.ReadAsync())
+                while (!xmlReader.EOF)
                 {
                     cancellationToken.ThrowIfCancellationRequested();
 
@@ -69,6 +69,14 @@ namespace Enbrea.SaxSVS
                         {
                             codeCatalog.Add(await SaxSVSCodeList.FromXmlReader(xmlReader, xmlReader.Name));
                         }
+                        else 
+                        {
+                            await xmlReader.ReadAsync();
+                        }
+                    }
+                    else
+                    {
+                        await xmlReader.ReadAsync();
                     }
                 }
             }
@@ -93,7 +101,7 @@ namespace Enbrea.SaxSVS
 
             using (var xmlReader = XmlReader.Create(_textReader, new XmlReaderSettings { IgnoreWhitespace = true, Async = true }))
             {
-                while (await xmlReader.ReadAsync())
+                while (!xmlReader.EOF)
                 {
                     cancellationToken.ThrowIfCancellationRequested();
 
@@ -103,6 +111,14 @@ namespace Enbrea.SaxSVS
                         {
                             codeList.Add(await SaxSVSCode.FromXmlReader(xmlReader, xmlReader.Name));
                         }
+                        else 
+                        {
+                            await xmlReader.ReadAsync();
+                        }
+                    }
+                    else
+                    {
+                        await xmlReader.ReadAsync();
                     }
                 }
             }

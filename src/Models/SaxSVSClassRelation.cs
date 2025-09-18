@@ -50,7 +50,7 @@ namespace Enbrea.SaxSVS
                 ClassId = Guid.Parse(xmlReader.GetAttribute("id")),
             };
             
-            await xmlReader.ReadAsync();
+            await xmlReader.SkipAsync();
             
             return relation;
         }

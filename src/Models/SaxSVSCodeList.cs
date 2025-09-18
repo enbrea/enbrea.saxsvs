@@ -62,19 +62,39 @@ namespace Enbrea.SaxSVS
                 Name = xmlReader.GetAttribute("bezeichnung")
             };
 
-            await xmlReader.ReadAsync();
-
             while (!xmlReader.EOF)
             {
-                if (xmlReader.NodeType == XmlNodeType.Element && xmlReader.Name == "element")
+                await xmlReader.MoveToContentAsync();
+
+                if (xmlReader.NodeType == XmlNodeType.Element)
                 {
-                    codeList.Codes.Add(await SaxSVSCode.FromXmlReader(xmlReader, "element"));
+                    if (xmlReader.Name == parentElementName)
+                    {
+                        if (xmlReader.IsEmptyElement)
+                        {
+                            await xmlReader.ReadAsync();
+                            return codeList;
+                        }
+                        else
+                        {
+                            await xmlReader.ReadAsync();
+                        }
+                    }
+                    else if (xmlReader.Name == "element")
+                    {
+                        codeList.Codes.Add(await SaxSVSCode.FromXmlReader(xmlReader, "element"));
+                    }
+                    else
+                    {
+                        await xmlReader.ReadAsync();
+                    }
                 }
                 else if (xmlReader.NodeType == XmlNodeType.EndElement && xmlReader.Name == parentElementName)
                 {
+                    await xmlReader.ReadAsync();
                     return codeList;
                 }
-                else 
+                else
                 {
                     await xmlReader.ReadAsync();
                 }
