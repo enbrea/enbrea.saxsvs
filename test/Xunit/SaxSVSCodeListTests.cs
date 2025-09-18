@@ -50,11 +50,15 @@ namespace Enbrea.SaxSVS.Tests
             Assert.Equal("1", codeList[0].Code);
             Assert.Equal(new DateTime(2005, 4, 27, 14, 34, 46), codeList[0].ValidFrom);
             Assert.Null(codeList[0].ValidTo);
+            Assert.Equal(21, codeList[0].ValidSchoolTypes.Count);
+            Assert.Equal("Gymnasium", codeList[0].ValidSchoolTypes[2]);
             Assert.Equal("weibl.", codeList[2].ShortName);
             Assert.Equal("weiblich", codeList[2].LongName);
             Assert.Equal("2", codeList[2].Code);
             Assert.Equal(new DateTime(2005, 4, 27, 14, 34, 46), codeList[2].ValidFrom);
             Assert.Null(codeList[2].ValidTo);
+            Assert.Equal(21, codeList[0].ValidSchoolTypes.Count);
+            Assert.Equal("Berufliches Gymnasium", codeList[0].ValidSchoolTypes[20]);
         }
     }
 }

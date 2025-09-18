@@ -26,7 +26,7 @@ using System.Xml;
 namespace Enbrea.SaxSVS
 {
     /// <summary>
-    /// SaxSVS student attendacne (Schüler:innenteilnahme für Klassen oder Unterricht)
+    /// SaxSVS student attendance (Schüler:innenteilnahme für Klassen oder Unterricht)
     /// </summary>
     public class SaxSVSStudentAttendance
     {
@@ -62,9 +62,9 @@ namespace Enbrea.SaxSVS
                 ValidFrom = ParseUtils.ParseDateTimeOrDefault(xmlReader.GetAttribute("von")),
                 ValidTo = ParseUtils.ParseDateTimeOrDefault(xmlReader.GetAttribute("bis"))
             };
-            
-            await xmlReader.ReadAsync();
-            
+
+            await xmlReader.SkipAsync();
+
             return attendance;
         }
     }

@@ -66,33 +66,45 @@ namespace Enbrea.SaxSVS
         /// <returns>
         public static async Task<SaxSVSCourse> FromXmlReader(XmlReader xmlReader, string parentElementName)
         {
-            var saxSVSCourse = new SaxSVSCourse
+            var course = new SaxSVSCourse
             {
                 Id = Guid.Parse(xmlReader.GetAttribute("id"))
             };
 
-            await xmlReader.ReadAsync();
-
             while (!xmlReader.EOF)
             {
+                await xmlReader.MoveToContentAsync();
+
                 if (xmlReader.NodeType == XmlNodeType.Element)
                 {
-                    if (xmlReader.Name == "wert")
+                    if (xmlReader.Name == parentElementName)
+                    {
+                        if (xmlReader.IsEmptyElement)
+                        {
+                            await xmlReader.ReadAsync();
+                            return course;
+                        }
+                        else
+                        {
+                            await xmlReader.ReadAsync();
+                        }
+                    }
+                    else if (xmlReader.Name == "wert")
                     {
                         var fieldId = xmlReader.GetAttribute("feld") ?? throw new FormatException("XML attribute \"field\" expected.");
 
                         switch (fieldId)
                         {
                             case "420-010":
-                                saxSVSCourse.ShortName = await xmlReader.ReadElementContentAsStringAsync();
+                                course.ShortName = await xmlReader.ReadElementContentAsStringAsync();
                                 break;
 
                             case "420-025":
-                                saxSVSCourse.TeacherId = Guid.Parse(xmlReader.GetAttribute("person-id"));
+                                course.TeacherId = Guid.Parse(xmlReader.GetAttribute("person-id"));
                                 break;
 
                             case "420-050":
-                                saxSVSCourse.Remark = await xmlReader.ReadElementContentAsStringAsync();
+                                course.Remark = await xmlReader.ReadElementContentAsStringAsync();
                                 break;
 
                             // not yet implemented
@@ -104,10 +116,11 @@ namespace Enbrea.SaxSVS
                             case "420-020":
                             case "420-030":
                             case "503-010":
+                                await xmlReader.SkipAsync();
                                 break;
 
                             default:
-                                await xmlReader.ReadAsync();
+                                await xmlReader.SkipAsync();
                                 break;
                         }
                     }
@@ -115,9 +128,11 @@ namespace Enbrea.SaxSVS
                     {
                         while (!xmlReader.EOF)
                         {
+                            await xmlReader.MoveToContentAsync();
+
                             if (xmlReader.NodeType == XmlNodeType.Element && xmlReader.Name == "schuelerzuordnung")
                             {
-                                saxSVSCourse.Students.Add(await SaxSVSStudentAttendance.FromXmlReader(xmlReader, xmlReader.Name));
+                                course.Students.Add(await SaxSVSStudentAttendance.FromXmlReader(xmlReader, xmlReader.Name));
                             }
                             else if (xmlReader.NodeType == XmlNodeType.EndElement && xmlReader.Name == "schuelerzuordnungen")
                             {
@@ -137,7 +152,8 @@ namespace Enbrea.SaxSVS
                 }
                 else if (xmlReader.NodeType == XmlNodeType.EndElement && xmlReader.Name == parentElementName)
                 {
-                    return saxSVSCourse;
+                    await xmlReader.ReadAsync();
+                    return course;
                 }
                 else
                 {

@@ -9,7 +9,7 @@
     <Product>Enbrea SaxSVS</Product>
     <Description>Reader class for SaxSVS XML interface files</Description>
     <NeutralLanguage></NeutralLanguage>
-    <Version>0.1.0</Version>
+    <Version>0.2.0</Version>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <RepositoryUrl>https://github.com/stuebersystems/enbrea.saxsvs</RepositoryUrl>

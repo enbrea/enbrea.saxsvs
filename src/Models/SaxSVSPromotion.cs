@@ -31,7 +31,7 @@ namespace Enbrea.SaxSVS
     public class SaxSVSPromotion
     {
         /// <summary>
-        /// Active contact (ID 514-009: Schuljahr)
+        /// Academic year (ID 514-009: Schuljahr)
         /// </summary>
         public string AcademicYear { get; set; }
 
@@ -67,13 +67,25 @@ namespace Enbrea.SaxSVS
         {
             var promotion = new SaxSVSPromotion();
 
-            await xmlReader.ReadAsync();
-
             while (!xmlReader.EOF)
             {
+                await xmlReader.MoveToContentAsync();
+
                 if (xmlReader.NodeType == XmlNodeType.Element)
                 {
-                    if (xmlReader.Name == "wert")
+                    if (xmlReader.Name == parentElementName)
+                    {
+                        if (xmlReader.IsEmptyElement)
+                        {
+                            await xmlReader.ReadAsync();
+                            return promotion;
+                        }
+                        else
+                        {
+                            await xmlReader.ReadAsync();
+                        }
+                    }
+                    else if (xmlReader.Name == "wert")
                     {
                         var fieldId = xmlReader.GetAttribute("feld") ?? throw new FormatException("XML attribute \"field\" expected.");
 
@@ -100,7 +112,7 @@ namespace Enbrea.SaxSVS
                                 break;
 
                             default:
-                                await xmlReader.ReadAsync();
+                                await xmlReader.SkipAsync();
                                 break;
                         }
                     }
@@ -111,6 +123,7 @@ namespace Enbrea.SaxSVS
                 }
                 else if (xmlReader.NodeType == XmlNodeType.EndElement && xmlReader.Name == parentElementName)
                 {
+                    await xmlReader.ReadAsync();
                     return promotion;
                 }
                 else

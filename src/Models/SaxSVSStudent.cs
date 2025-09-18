@@ -47,6 +47,11 @@ namespace Enbrea.SaxSVS
         public IList<SaxSVSCustodian> Custodians { get; set; } = [];
 
         /// <summary>
+        /// Elective subjects (Liste der Wahlfächer)
+        /// </summary>
+        public IList<SaxSVSElectiveSubject> ElectiveSubjects { get; set; } = [];
+
+        /// <summary>
         /// Promotions (Liste der Versetzungen)
         /// </summary>
         public IList<SaxSVSPromotion> Promotions { get; set; } = [];
@@ -146,13 +151,25 @@ namespace Enbrea.SaxSVS
                 Id = Guid.Parse(xmlReader.GetAttribute("id"))
             };
 
-            await xmlReader.ReadAsync();
-
             while (!xmlReader.EOF)
             {
+                await xmlReader.MoveToContentAsync();
+
                 if (xmlReader.NodeType == XmlNodeType.Element)
                 {
-                    if (xmlReader.Name == "wert")
+                    if (xmlReader.Name == parentElementName)
+                    {
+                        if (xmlReader.IsEmptyElement)
+                        {
+                            await xmlReader.ReadAsync();
+                            return student;
+                        }
+                        else
+                        {
+                            await xmlReader.ReadAsync();
+                        }
+                    }
+                    else if (xmlReader.Name == "wert")
                     {
                         var fieldId = xmlReader.GetAttribute("feld") ?? throw new FormatException("XML attribute \"field\" expected.");
 
@@ -230,20 +247,20 @@ namespace Enbrea.SaxSVS
                             case "500-060":
                             case "516-003":
                             case "516-004":
-                                await xmlReader.ReadAsync();
+                                await xmlReader.SkipAsync();
                                 break;
 
                             default:
-                                await xmlReader.ReadAsync();
+                                await xmlReader.SkipAsync();
                                 break;
                         }
                     }
                     else if (xmlReader.Name == "sorgeberechtigte")
                     {
-                        await xmlReader.ReadAsync();
-
                         while (!xmlReader.EOF)
                         {
+                            await xmlReader.MoveToContentAsync();
+
                             if (xmlReader.NodeType == XmlNodeType.Element && xmlReader.Name == "sorgeberechtigter")
                             {
                                 student.Custodians.Add(await SaxSVSCustodian.FromXmlReader(xmlReader, xmlReader.Name));
@@ -266,14 +283,36 @@ namespace Enbrea.SaxSVS
                         switch (name)
                         {
                             case "Versetzung":
-                                
-                                await xmlReader.ReadAsync();
 
                                 while (!xmlReader.EOF)
                                 {
+                                    await xmlReader.MoveToContentAsync();
+
                                     if (xmlReader.NodeType == XmlNodeType.Element && xmlReader.Name == "gruppierung")
                                     {
                                         student.Promotions.Add(await SaxSVSPromotion.FromXmlReader(xmlReader, xmlReader.Name));
+                                    }
+                                    else if (xmlReader.NodeType == XmlNodeType.EndElement && xmlReader.Name == "zusammenstellung")
+                                    {
+                                        await xmlReader.ReadAsync();
+                                        break;
+                                    }
+                                    else
+                                    {
+                                        await xmlReader.ReadAsync();
+                                    }
+                                }
+                                break;
+
+                            case "Wahlfächer":
+
+                                while (!xmlReader.EOF)
+                                {
+                                    await xmlReader.MoveToContentAsync();
+
+                                    if (xmlReader.NodeType == XmlNodeType.Element && xmlReader.Name == "gruppierung")
+                                    {
+                                        student.ElectiveSubjects.Add(await SaxSVSElectiveSubject.FromXmlReader(xmlReader, xmlReader.Name));
                                     }
                                     else if (xmlReader.NodeType == XmlNodeType.EndElement && xmlReader.Name == "zusammenstellung")
                                     {
@@ -294,12 +333,11 @@ namespace Enbrea.SaxSVS
                             case "Sportbefreiungen":
                             case "Prüfungsfächer":
                             case "Integration":
-                            case "Wahlfächer":
-                                await xmlReader.ReadAsync();
+                                await xmlReader.SkipAsync();
                                 break;
 
                             default:
-                                await xmlReader.ReadAsync();
+                                await xmlReader.SkipAsync();
                                 break;
                         }
                     }
@@ -310,6 +348,7 @@ namespace Enbrea.SaxSVS
                 }
                 else if (xmlReader.NodeType == XmlNodeType.EndElement && xmlReader.Name == parentElementName)
                 {
+                    await xmlReader.ReadAsync();
                     return student;
                 }
                 else

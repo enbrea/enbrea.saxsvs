@@ -100,13 +100,25 @@ namespace Enbrea.SaxSVS
                 Id = Guid.Parse(xmlReader.GetAttribute("id"))
             };
 
-            await xmlReader.ReadAsync();
-
             while (!xmlReader.EOF)
             {
+                await xmlReader.MoveToContentAsync();
+
                 if (xmlReader.NodeType == XmlNodeType.Element)
                 {
-                    if (xmlReader.Name == "wert")
+                    if (xmlReader.Name == parentElementName)
+                    {
+                        if (xmlReader.IsEmptyElement)
+                        {
+                            await xmlReader.ReadAsync();
+                            return employee;
+                        }
+                        else
+                        {
+                            await xmlReader.ReadAsync();
+                        }
+                    }
+                    else if (xmlReader.Name == "wert")
                     {
                         var fieldId = xmlReader.GetAttribute("feld") ?? throw new FormatException("XML attribute \"field\" expected.");
 
@@ -149,7 +161,7 @@ namespace Enbrea.SaxSVS
                                 break;
 
                             default:
-                                await xmlReader.ReadAsync();
+                                await xmlReader.SkipAsync();
                                 break;
                         }
                     }
@@ -164,11 +176,11 @@ namespace Enbrea.SaxSVS
                             case "Auswahl Einsatzfächer":
                             case "Anrechnungen, Ermäßigungen, Freistellungen, Minderungen und Funktionen":
                             case "Abordnungen":
-                                await xmlReader.ReadAsync();
+                                await xmlReader.SkipAsync();
                                 break;
 
                             default:
-                                await xmlReader.ReadAsync();
+                                await xmlReader.SkipAsync();
                                 break;
                         }
                     }
@@ -179,6 +191,7 @@ namespace Enbrea.SaxSVS
                 }
                 else if (xmlReader.NodeType == XmlNodeType.EndElement && xmlReader.Name == parentElementName)
                 {
+                    await xmlReader.ReadAsync();
                     return employee;
                 }
                 else

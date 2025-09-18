@@ -81,65 +81,81 @@ namespace Enbrea.SaxSVS
                 Code = xmlReader.GetAttribute("extern-id")
             };
 
-            await xmlReader.ReadAsync();
-
             while (!xmlReader.EOF)
             {
+                await xmlReader.MoveToContentAsync();
+
                 if (xmlReader.NodeType == XmlNodeType.Element)
                 {
-                    switch (xmlReader.Name)
+                    if (xmlReader.Name == parentElementName)
                     {
-                        case "extern":
-                            code.Code = await xmlReader.ReadElementContentAsStringAsync();
-                            break;
-
-                        case "kurz":
-                            code.ShortName = await xmlReader.ReadElementContentAsStringAsync();
-                            break;
-
-                        case "lang":
-                            code.LongName = await xmlReader.ReadElementContentAsStringAsync();
-                            break;
-
-                        case "sort":
-                            code.SortingName = await xmlReader.ReadElementContentAsStringAsync();
-                            break;
-
-                        case "gueltig":
-                            code.ValidFrom = ParseUtils.ParseDateTimeOrDefault(xmlReader.GetAttribute("von"));
-                            code.ValidTo = ParseUtils.ParseDateTimeOrDefault(xmlReader.GetAttribute("bis"));
+                        if (xmlReader.IsEmptyElement)
+                        {
                             await xmlReader.ReadAsync();
-                            break;
-
-                        case "schularten" when !xmlReader.IsEmptyElement:
+                            return code;
+                        }
+                        else
+                        {
                             await xmlReader.ReadAsync();
+                        }
+                    }
+                    else
+                    {
+                        switch (xmlReader.Name)
+                        {
+                            case "extern":
+                                code.Code = await xmlReader.ReadElementContentAsStringAsync();
+                                break;
 
-                            while (!xmlReader.EOF)
-                            {
-                                if (xmlReader.NodeType == XmlNodeType.Element && xmlReader.Name == "schulart")
-                                {
-                                    code.ValidSchoolTypes.Add(await xmlReader.ReadElementContentAsStringAsync());
-                                }
-                                else if (xmlReader.NodeType == XmlNodeType.EndElement && xmlReader.Name == "schularten")
-                                {
-                                    await xmlReader.ReadAsync();
-                                    break;
-                                }
-                                else
-                                {
-                                    await xmlReader.ReadAsync();
-                                }
-                            }
+                            case "kurz":
+                                code.ShortName = await xmlReader.ReadElementContentAsStringAsync();
+                                break;
 
-                            break;
+                            case "lang":
+                                code.LongName = await xmlReader.ReadElementContentAsStringAsync();
+                                break;
 
-                        default:
-                            await xmlReader.ReadAsync();
-                            break;
+                            case "sort":
+                                code.SortingName = await xmlReader.ReadElementContentAsStringAsync();
+                                break;
+
+                            case "gueltig":
+                                code.ValidFrom = ParseUtils.ParseDateTimeOrDefault(xmlReader.GetAttribute("von"));
+                                code.ValidTo = ParseUtils.ParseDateTimeOrDefault(xmlReader.GetAttribute("bis"));
+                                await xmlReader.SkipAsync();
+                                break;
+
+                            case "schularten" when !xmlReader.IsEmptyElement:
+                                while (!xmlReader.EOF)
+                                {
+                                    await xmlReader.MoveToContentAsync();
+
+                                    if (xmlReader.NodeType == XmlNodeType.Element && xmlReader.Name == "schulart")
+                                    {
+                                        code.ValidSchoolTypes.Add(await xmlReader.ReadElementContentAsStringAsync());
+                                    }
+                                    else if (xmlReader.NodeType == XmlNodeType.EndElement && xmlReader.Name == "schularten")
+                                    {
+                                        await xmlReader.ReadAsync();
+                                        break;
+                                    }
+                                    else
+                                    {
+                                        await xmlReader.ReadAsync();
+                                    }
+                                }
+
+                                break;
+
+                            default:
+                                await xmlReader.SkipAsync();
+                                break;
+                        }
                     }
                 }
                 else if (xmlReader.NodeType == XmlNodeType.EndElement && xmlReader.Name == parentElementName)
                 {
+                    await xmlReader.ReadAsync();
                     return code;
                 }
                 else 
