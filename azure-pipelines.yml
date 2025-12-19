@@ -88,20 +88,20 @@ stages:
       displayName: 'Restore'
       inputs:
         command: 'restore'
-        projects: '*.sln'
+        projects: '*.slnx'
         feedsToUse: 'select'
         vstsFeed: 'b0890edd-bcca-4a1c-b63c-d22daf6e4407/24f47e68-5eca-4ba8-8ab3-905662347d75'
     - task: DotNetCoreCLI@2
       displayName: 'Build'
       inputs:
         command: 'build'
-        projects: '*.sln'
+        projects: '*.slnx'
         arguments: '-c $(BuildConfiguration) --no-restore /p:ContinuousIntegrationBuild=true'
     - task: DotNetCoreCLI@2
       displayName: 'Test'
       inputs:
         command: 'test'
-        projects: '*.sln'
+        projects: '*.slnx'
         arguments: '-c $(BuildConfiguration) --no-build'
         testRunTitle: 'Perform unit tests'
     - task: DotNetCoreCLI@2
@@ -124,7 +124,7 @@ stages:
         arguments: 'sign $(Build.ArtifactStagingDirectory)/**/*.nupkg -Timestamper http://timestamp.digicert.com -CertificateFingerprint $(SM_CERT_FINGERPRINT) -HashAlgorithm SHA256 -Verbosity detailed -Overwrite'
     - publish: '$(Build.ArtifactStagingDirectory)'
       artifact: drop
-
+      
 - stage: github
   displayName: Publish Source
   dependsOn: build
@@ -152,7 +152,7 @@ stages:
             git config user.email 'azuredevops@stueber.nomail'
 
             # Add 'github' remote
-            git remote add github "https://$($env:PAT)@github.com/enbrea/enbrea.saxsvs.git"
+            git remote add github https://$($env:PAT)@github.com/enbrea/enbrea.saxsvs.git
 
             # Fetch remote main if it exists (ok to fail if repo is empty)
             git fetch --prune github main
@@ -179,16 +179,17 @@ stages:
           }
       env:
         PAT: $(PAT)
-     
+
 - stage: deploy
   displayName: Deploy
-  dependsOn: build
+  dependsOn: [versioning, build] 
+  variables:
+    SemVersion: $[ stageDependencies.versioning.get_version.outputs['gitver.SemVersion'] ]
   jobs:
   - job: upload
     displayName: Upload Package
     steps:
     - download: current
-      displayName: 'Download artifacts'
       artifact: drop
     - task: NuGetCommand@2
       displayName: 'Publish preview to internal feed'
