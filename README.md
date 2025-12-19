@@ -5,7 +5,7 @@
 
 A .NET library for reading XML export files of [SaxSVS](https://saxsvs.de/). 
 
-+ Supports .NET 8 and .NET 9
++ Supports .NET 10, .NET 9 and .NET 8.
 + Supports xml files which are compatible with [saxsvs-5.0.0.xsd](https://web1.extranet.sachsen.de/svsp/public/XMLSchema/v5.0.0/index.xml).
 + Supports xml code lists which are compatible with [svsp](https://web1.extranet.sachsen.de/svsp/public/schnittstellen/index.xml).
 + Supports xml code list catalogs which are compatible with [bbsp](https://web1.extranet.sachsen.de/bbsp/public/schnittstellen/Schluessel.xml).

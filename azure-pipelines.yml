@@ -188,6 +188,7 @@ stages:
     displayName: Upload Package
     steps:
     - download: current
+      displayName: 'Download artifacts'
       artifact: drop
     - task: NuGetCommand@2
       displayName: 'Publish preview to internal feed'
